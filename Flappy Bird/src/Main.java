@@ -4,7 +4,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 			
-			JFrame panel = new JFrame("Tetris");
+			JFrame panel = new JFrame("Flappy");
 			panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			panel.setResizable(false);
 			
