@@ -1,3 +1,6 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JFrame;
 
 public class Main {
@@ -12,11 +15,14 @@ public class Main {
 			Display d = new Display();
 			panel.add(d);
 			panel.pack();
-			
+			d.setFocusable(true);
+			d.requestFocusInWindow();
+			d.addKeyListener(d);
 			panel.setLocationRelativeTo(null);
 			panel.setVisible(true);
 			
 			
 		}
+	
 	
 }
