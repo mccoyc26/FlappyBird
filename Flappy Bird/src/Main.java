@@ -21,6 +21,11 @@ public class Main {
 			panel.setLocationRelativeTo(null);
 			panel.setVisible(true);
 			
+			StartScreen startScreen = new StartScreen(panel);
+			panel.add(startScreen);
+			panel.setVisible(true);
+
+			
 			
 		}
 	
