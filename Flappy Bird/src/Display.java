@@ -17,7 +17,7 @@ import javax.swing.Timer;
 
 public class Display extends JPanel implements ActionListener, KeyListener{
 	
-	public static boolean debugging = true;
+	public static boolean debugging = false;
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;
 	
@@ -50,15 +50,19 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
         
-        g.setColor(Color.green);
+		
+		//g.setColor(Color.green);
         //g.fillRect(pipeX, 0, pipeWidth, gapY); // top pipe
+		Background bgr = new Background(0,0);
+		bgr.paint(g);
+		
+		
+		
         TopPipe pipe1 = new TopPipe();
         int h = pipe1.getHeight();
         TopPipe pipe2 = new TopPipe(pipeX, gapY-h);
         pipe2.paint(g);
         
-        TopPipe pipe3 = new TopPipe(pipeX+100, gapY-h);
-        pipe3.paint(g);
         
         //g.fillRect(pipeX, gapY + gapHeight, pipeWidth, getHeight() - gapY - gapHeight - 100); // bottom pipe
         
@@ -67,8 +71,8 @@ public class Display extends JPanel implements ActionListener, KeyListener{
         pipe.paint(g);
         
         // Draw ground
-        g.setColor(Color.orange);
-        g.fillRect(0, getHeight() - 100, getWidth(), 100);
+        Foreground fgr = new Foreground(0,620);
+		fgr.paint(g);
 		
 		croc.paint(g);
 	}
