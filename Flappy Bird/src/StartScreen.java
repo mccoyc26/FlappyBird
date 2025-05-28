@@ -23,7 +23,7 @@ public class StartScreen extends JPanel {
    }
    private void loadImage() {
        try {
-           backgroundImage = ImageIO.read(new File("imgs/bgr.png")); // Adjust path as needed
+    	   backgroundImage = ImageIO.read(getClass().getResource("/imgs/start.png"));
        } catch (IOException e) {
            System.err.println("Could not load start screen image.");
            e.printStackTrace();
@@ -34,6 +34,14 @@ public class StartScreen extends JPanel {
        parentFrame.add(new GamePanel()); // Your actual game panel here
        parentFrame.revalidate();
        parentFrame.repaint();
+       Display d = new Display();
+       parentFrame.add(d);
+       parentFrame.pack();
+       d.setFocusable(true);
+       d.requestFocusInWindow();
+       d.addKeyListener(d);
+       parentFrame.setLocationRelativeTo(null);
+       parentFrame.setVisible(true);
    }
    @Override
    protected void paintComponent(Graphics g) {

@@ -115,6 +115,10 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    if (e.getKeyCode() == 32) {
 	        croc.hop();
 	    }
+	    if (e.getKeyCode() == 82) {
+	        timer.start();
+	    	resetPipe();
+	    }
 	}
 
 

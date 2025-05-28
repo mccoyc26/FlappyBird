@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -11,22 +12,12 @@ public class Main {
 			panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			panel.setResizable(false);
 			
-			//add game window
-			Display d = new Display();
-			panel.add(d);
-			panel.pack();
-			d.setFocusable(true);
-			d.requestFocusInWindow();
-			d.addKeyListener(d);
-			panel.setLocationRelativeTo(null);
-			panel.setVisible(true);
-			
 			StartScreen startScreen = new StartScreen(panel);
+			startScreen.setPreferredSize(new Dimension(1280, 720));
 			panel.add(startScreen);
+			panel.pack();
+	        panel.setLocationRelativeTo(null);
 			panel.setVisible(true);
-
-			
-			
 		}
 	
 	
