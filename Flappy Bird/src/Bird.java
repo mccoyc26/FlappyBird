@@ -13,12 +13,12 @@ public class Bird {
 	private int width,height;
 	private AffineTransform tx;
 	private Image forward;
-	private double scaleWidth = 1;		//change to scale image
-	private double scaleHeight = 1; 		//change to scale image
+	private double scaleWidth = 0.06;		//change to scale image
+	private double scaleHeight = 0.06; 		//change to scale image
 	
 	
 	public Bird() {
-		forward 	= getImage("/imgs/"+"croc.png"); //load the image
+		forward 	= getImage("/imgs/"+"b.png"); //load the image
 		
 		if (forward == null) {
 		    System.out.println("Image failed to load!");
@@ -111,10 +111,18 @@ public class Bird {
 	    y += vy;
 	    
 	    if (vy > 10) vy = 10;
-
+	    
+	    if(vy < 0) forward = getImage("/imgs/"+"b_flap.png");
+	    if(vy == 0) forward = getImage("/imgs/"+"b.png");
+	    if(vy > 0) forward = getImage("/imgs/"+"b_fall.png");
+	    
 	    // Simple floor collision
 	    if (y > 620 - height) {
 	        y = 620 - height;
+	        vy = 0;
+	    }
+	    if (y < 0 ) {
+	        y = 0;
 	        vy = 0;
 	    }
 

@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JPanel;
@@ -21,14 +22,13 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;
 	
+	private ArrayList<Pipe> pipes = new ArrayList<>();
+	private int pipeSpawnTimer = 0;
+	private final int PIPE_SPAWN_INTERVAL = 90; // frames (~1.5 seconds)
+
+	
 	//Pipe properties
-		private int pipeX = 800;
-		private int pipeWidth = 80;
-		private int gapHeight = 150;
-		private int gapY; //Y position of top of the gap
 		
-		private final int PIPE_SPEED = 5;
-		private final int PIPE_RESET_X = 800;
 		private Random rand;
 		private Timer timer;
 		
@@ -40,90 +40,63 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 		timer = new Timer(16, this); // ~60 FPS
 		timer.start();
 		rand = new Random();
-		resetPipe();     
+		spawnPipe();     
 		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		this.setBackground(Color.DARK_GRAY);
 		this.setLayout(null);
 		
 	}
 	
+	@Override
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-        
-		
-		//g.setColor(Color.green);
-        //g.fillRect(pipeX, 0, pipeWidth, gapY); // top pipe
-		Background bgr = new Background(0,0);
-		bgr.paint(g);
-		
-		
-		
-        TopPipe pipe1 = new TopPipe();
-        int h = pipe1.getHeight();
-        TopPipe pipe2 = new TopPipe(pipeX, gapY-h);
-        pipe2.paint(g);
-        
-        
-        //g.fillRect(pipeX, gapY + gapHeight, pipeWidth, getHeight() - gapY - gapHeight - 100); // bottom pipe
-        
-        
-        BottomPipe pipe = new BottomPipe(pipeX, gapY + gapHeight);
-        pipe.paint(g);
-        
-        // Draw ground
-        Foreground fgr = new Foreground(0,620);
-		fgr.paint(g);
-		
-		croc.paint(g);
-	}
-	
-	private boolean checkCollision() {
-        // Bird rectangle
-        Rectangle birdRect = new Rectangle(320, croc.getY()+5, 60, 40);
-        // Top pipe
-        Rectangle topPipe = new Rectangle(pipeX, 0, pipeWidth, gapY);
-        // Bottom pipe
-        Rectangle bottomPipe = new Rectangle(pipeX, gapY + gapHeight, pipeWidth, getHeight() - gapY - gapHeight - 100);
+	    super.paintComponent(g);
 
-        return birdRect.intersects(topPipe) || birdRect.intersects(bottomPipe);
-    }
-	
-	private void resetPipe() {
-		pipeX = PIPE_RESET_X;
-		gapY = 100 + rand.nextInt(300); //random gap
-		//gapY = 300;
+	    Background bgr = new Background(0, 0);
+	    bgr.paint(g);
+
+	    for (Pipe p : pipes) {
+	        p.paint(g);
+	    }
+
+	    Foreground fgr = new Foreground(0, 620);
+	    fgr.paint(g);
+
+	    croc.paint(g);
 	}
+	
+	private void spawnPipe() {
+	    int gapY = 100 + rand.nextInt(300);
+	    pipes.add(new Pipe(WIDTH, gapY));
+	}
+
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		croc.update();
+	    croc.update();
+	    Rectangle birdRect = new Rectangle(320, croc.getY() + 5, 60, 40);
+	    // Update pipes
+	    pipeSpawnTimer++;
+	    if (pipeSpawnTimer >= PIPE_SPAWN_INTERVAL) {
+	        spawnPipe();
+	        pipeSpawnTimer = 0;
+	    }
 
-		//pipe movement
-		pipeX -= PIPE_SPEED;
-		if(pipeX + pipeWidth < 0){
-			resetPipe();
-		}
-				
-		//collision
-		if(checkCollision()) {
-			timer.stop();
-			System.out.println("GAME OVER");
-		}
-		
-		repaint();
+	    for (int i = 0; i < pipes.size(); i++) {
+	        Pipe p = pipes.get(i);
+	        p.update();
+	        if (p.isOffScreen()) {
+	        	p.setX(1280);
+	        } else {
+	            if (p.collidesWith(new Rectangle(320, croc.getY()+5, 60, 40))) {
+	                timer.stop();
+	                System.out.println("GAME OVER");
+	            }
+	        }
+	    }
+
+	    repaint();
 	}
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-	    if (e.getKeyCode() == 32) {
-	        croc.hop();
-	    }
-	    if (e.getKeyCode() == 82) {
-	        timer.start();
-	    	resetPipe();
-	    }
-	}
 
 
 //	@Override
@@ -148,6 +121,20 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getKeyCode() == 32) {
+	        croc.hop();
+	    }
+	    if (e.getKeyCode() == 82) {
+	        timer.start();
+	    }
+	    if (e.getKeyCode() == 80) {
+	    	timer.stop();
+	    }
 	}
 	
 }

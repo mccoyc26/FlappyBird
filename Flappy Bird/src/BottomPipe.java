@@ -18,7 +18,7 @@ public class BottomPipe {
 	
 	
 	public BottomPipe() {
-		forward 	= getImage("/imgs/"+"pipe.png"); //load the image
+		forward 	= getImage("/imgs/"+"bPipe_low.png"); //load the image
 		
 		if (forward == null) {
 		    System.out.println("Image failed to load!");
