@@ -22,10 +22,11 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;
 	
+	private boolean gameOver;
 	private ArrayList<Pipe> pipes = new ArrayList<>();
 	private int pipeSpawnTimer = 0;
 	private final int PIPE_SPAWN_INTERVAL = 90; // frames (~1.5 seconds)
-
+	private GameOverGiph gif = new GameOverGiph();
 	
 	//Pipe properties
 		
@@ -62,6 +63,11 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    fgr.paint(g);
 
 	    croc.paint(g);
+	    
+	    if (gameOver) {
+            gif.paint(g);
+        }
+
 	}
 	
 	private void spawnPipe() {
@@ -88,8 +94,10 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	        	p.setX(1280);
 	        } else {
 	            if (p.collidesWith(new Rectangle(320, croc.getY()+5, 60, 40))) {
-	                timer.stop();
+	            	gameOver = true;
+	            	timer.stop();
 	                System.out.println("GAME OVER");
+	                
 	            }
 	        }
 	    }
@@ -97,19 +105,6 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    repaint();
 	}
 
-
-
-//	@Override
-//	public void keyReleased(KeyEvent arg0) {
-//		// TODO Auto-generated method stub
-//		//System.out.println(arg0.getKeyCode());
-//		if(arg0.getKeyCode()==32) {
-//			//move char up
-//			croc.hop(1);
-//		}
-//		
-//		
-//	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -131,10 +126,13 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    }
 	    if (e.getKeyCode() == 82) {
 	        timer.start();
+	        gameOver = false;
 	    }
 	    if (e.getKeyCode() == 80) {
 	    	timer.stop();
 	    }
 	}
+	
+	
 	
 }
