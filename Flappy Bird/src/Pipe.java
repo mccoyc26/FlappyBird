@@ -6,30 +6,36 @@ public class Pipe {
     int width = 80;
     int gapY;
     int gapHeight = 150;
-    
-    public int getX() {
-		return x;
-	}
-
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	int speed = 5;
+    int speed = 5;
     int screenHeight = Display.HEIGHT;
+
+    private TopPipe top;
+    private BottomPipe bottom;
 
     public Pipe(int startX, int gapY) {
         this.x = startX;
         this.gapY = gapY;
+
+        // Create TopPipe and BottomPipe ONCE
+        top = new TopPipe();
+        bottom = new BottomPipe();
+        updatePipePositions();
     }
 
     public void update() {
         x -= speed;
+        updatePipePositions();
+    }
+
+    private void updatePipePositions() {
+        top.setX(x);
+        top.setY(gapY - top.getHeight());
+
+        bottom.setX(x);
+        bottom.setY(gapY + gapHeight);
     }
 
     public void paint(Graphics g) {
-        TopPipe top = new TopPipe(x, gapY - new TopPipe().getHeight());
-        BottomPipe bottom = new BottomPipe(x, gapY + gapHeight);
         top.paint(g);
         bottom.paint(g);
     }
@@ -42,5 +48,15 @@ public class Pipe {
         Rectangle topRect = new Rectangle(x, 0, width, gapY);
         Rectangle bottomRect = new Rectangle(x, gapY + gapHeight, width, screenHeight - gapY - gapHeight - 100);
         return bird.intersects(topRect) || bird.intersects(bottomRect);
+    }
+
+    public void setX(int newX) {
+        this.x = newX;
+        updatePipePositions();
+    }
+
+    public void setGapY(int newGapY) {
+        this.gapY = newGapY;
+        updatePipePositions();
     }
 }
