@@ -6,19 +6,19 @@ import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.net.URL;
 
-public class Bird {
+public class BottomPipe {
 	
 	private int x,y;
 	private int vx,vy;
 	private int width,height;
 	private AffineTransform tx;
 	private Image forward;
-	private double scaleWidth = 1;		//change to scale image
-	private double scaleHeight = 1; 		//change to scale image
+	private double scaleWidth = 0.35;		//change to scale image
+	private double scaleHeight = 0.35; 		//change to scale image
 	
 	
-	public Bird() {
-		forward 	= getImage("/imgs/"+"croc.png"); //load the image
+	public BottomPipe() {
+		forward 	= getImage("/imgs/"+"pipe.png"); //load the image
 		
 		if (forward == null) {
 		    System.out.println("Image failed to load!");
@@ -39,7 +39,7 @@ public class Bird {
 		init(x, y); 				//initialize the location of the image
 	}
 	
-	public Bird(int x, int y) {
+	public BottomPipe(int x, int y) {
 		//call the default constructor
 		this(); //invokes default constructor
 		//do the specific task for THIS constructor
@@ -75,11 +75,11 @@ public class Bird {
 		g2.drawImage(forward, tx, null);
 			
 		//draw hitbox based on x, y, width, height
-		if(Display.debugging) {
-			//draw hitbox only if debugging
-			g.setColor(Color.green);
-			g.drawRect(x+20, y+5, width, height);
-		}
+//		if(Display.debugging) {
+//			//draw hitbox only if debugging
+//			g.setColor(Color.green);
+//			g.drawRect(x+20, y+5, width, height);
+//		}
 		
 	}
 	
@@ -91,34 +91,12 @@ public class Bird {
 	private Image getImage(String path) {
 		Image tempImage = null;
 		try {
-			URL imageURL = Bird.class.getResource(path);
+			URL imageURL = BottomPipe.class.getResource(path);
 			tempImage = Toolkit.getDefaultToolkit().getImage(imageURL);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return tempImage;
-	}
-
-	public void hop() {
-		
-		vy = -8;
-		
-	}
-	
-	public void update() {
-	    // Gravity
-	    vy += 1; // gravity pulling down
-	    y += vy;
-	    
-	    if (vy > 10) vy = 10;
-
-	    // Simple floor collision
-	    if (y > Display.HEIGHT - height) {
-	        y = Display.HEIGHT - height;
-	        vy = 0;
-	    }
-
-	    init(x, y);
 	}
 
 	

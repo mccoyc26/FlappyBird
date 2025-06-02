@@ -98,25 +98,22 @@ public class Pipes extends JPanel implements ActionListener, KeyListener{
         g.fillRect(pipeX, gapY + gapHeight, pipeWidth, getHeight() - gapY - gapHeight - 100); // bottom pipe
     }
 
-    
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            birdVelocity = FLAP_STRENGTH;
-        }
-    }
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 
-    public void keyReleased(KeyEvent e) {}
-    public void keyTyped(KeyEvent e) {}
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Flappy Bird with Pipes");
-        Pipes game = new Pipes();
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(game);
-        frame.pack();
-        frame.setResizable(false);
-        frame.setVisible(true);
-    }
 }
-
