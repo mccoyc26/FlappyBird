@@ -31,7 +31,7 @@ public class StartScreen extends JPanel {
    }
    private void startGame() {
        parentFrame.getContentPane().removeAll();
-       parentFrame.add(new GamePanel()); // Your actual game panel here
+       parentFrame.add(new GamePanel());
        parentFrame.revalidate();
        parentFrame.repaint();
        Display d = new Display();

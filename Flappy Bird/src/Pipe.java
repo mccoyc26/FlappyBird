@@ -8,6 +8,7 @@ public class Pipe {
     int gapHeight = 150;
     int speed = 5;
     int screenHeight = Display.HEIGHT;
+    public boolean scored = false;
 
     private TopPipe top;
     private BottomPipe bottom;

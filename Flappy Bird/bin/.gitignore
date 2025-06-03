@@ -15,3 +15,6 @@
 /Foreground.class
 /GameOverGiph.class
 /Display$GameOverGiph.class
+/ScoreManager.class
+/ScoreManager$ScoreEntry.class
+/assets/

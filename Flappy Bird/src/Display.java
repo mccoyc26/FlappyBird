@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -15,7 +17,9 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 public class Display extends JPanel implements ActionListener, KeyListener{
 	
 	public static boolean debugging = false;
@@ -23,26 +27,53 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	public static final int HEIGHT = 720;
 	
 	private boolean gameOver;
-	private final int NUM_PIPES = 5; // or 6, depending on spacing
+	private final int NUM_PIPES = 5;
 	private ArrayList<Pipe> pipes = new ArrayList<>();
 	private int pipeSpawnTimer = 0;
 	private final int PIPE_SPAWN_INTERVAL = 90; // frames (~1.5 seconds)
 	private GameOverGiph gif = new GameOverGiph();
 	private Background background = new Background(0, 0);
 	private Foreground foreground = new Foreground(0, 620);
-	
-
-	
-	//Pipe properties
-		
-		private Random rand;
-		private Timer timer;
-		
+	private ScoreManager scoreManager = new ScoreManager();
+	private int score = 0;
+	private boolean onTitleScreen = true;	
+	private Random rand;
+	private Timer timer;
+	private Font gameFont;
 	Bird croc = new Bird(300,300);
 	
 	
+
+	private void loadFont() {
+	    try {
+	        // Note the leading slash to look in the root of the classpath
+	        InputStream is = getClass().getResourceAsStream("/assets/funFont.ttf");
+	        if (is == null) {
+	            throw new IOException("Font file not found");
+	        }
+	        gameFont = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(32f);
+	        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	        ge.registerFont(gameFont);
+	        is.close();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        gameFont = new Font("Arial", Font.BOLD, 32); // fallback
+	    }
+	}
+
+
+
+	
 	public Display() {
 		//create display settings
+		
+		File fontFile = new File("assets/funFont.ttf");
+		System.out.println("Exists? " + fontFile.exists());
+		System.out.println("Absolute path: " + fontFile.getAbsolutePath());
+
+
+		
+		loadFont();
 		timer = new Timer(16, this); // ~60 FPS
 		timer.start();
 		rand = new Random();
@@ -62,7 +93,24 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    super.paintComponent(g);
 
 	    background.paint(g);
+	    
+	    if (onTitleScreen) {
+	        g.setColor(Color.WHITE);
+	        g.setFont(gameFont.deriveFont(32f));
+	        g.drawString("Flappy Bird", 500, 150);
+	        g.setFont(gameFont.deriveFont(24f));
+	        g.drawString("Press SPACE to start", 470, 200);
 
+	        g.drawString("High Scores:", 500, 300);
+	        int y = 340;
+	        for (ScoreManager.ScoreEntry entry : scoreManager.getScores()) {
+	            g.drawString(entry.name + " - " + entry.score, 500, y);
+	            y += 30;
+	        }
+
+	        return; // Skip drawing pipes and bird on title screen
+	    }
+	    
 	    for (Pipe p : pipes) {
 	        p.paint(g);
 	    }
@@ -71,21 +119,23 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 
 	    croc.paint(g);
 	    
+	    g.setColor(Color.WHITE);
+	    g.setFont(gameFont.deriveFont(24f));
+	    g.drawString("Score: " + score, 20, 40);
+	    
 	    if (gameOver) {
             gif.paint(g);
+            g.drawString("Press R to restart", 500, 400);
         }
 
 	}
 	
-//	private void spawnPipe() {
-//	    int gapY = 100 + rand.nextInt(300);
-//	    pipes.add(new Pipe(WIDTH, gapY));
-//	}
-
-	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-	    if(!gameOver) {
+	    
+		if (onTitleScreen || gameOver) return;
+		
+		if(!gameOver) {
 			croc.update();
 		    Rectangle birdRect = new Rectangle(320, croc.getY() + 5, 60, 40);
 	
@@ -103,12 +153,29 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 		            // Move this pipe to the right of the furthest pipe
 		            p.x = maxX + 300; // 300 is pipe spacing
 		            p.gapY = 100 + rand.nextInt(300);
+		            
+		            p.scored = false;  // reset scored flag on recycle
+		        }
+		        
+		     // Score increment when bird passes pipe's right edge and not yet scored
+		        if (!p.scored && croc.getX() > p.x + p.width) { // PIPE_WIDTH is the pipe image width (e.g., 60 or 80)
+		            score++;
+		            p.scored = true;
 		        }
 	
 		        // Collision check
 		        if (p.collidesWith(birdRect)) {
 		            gameOver = true;
 		            System.out.println("GAME OVER");
+		            
+		            ArrayList<ScoreManager.ScoreEntry> highs = scoreManager.getScores();
+		            if (highs.size() < 5 || score > highs.get(highs.size() - 1).score) {
+		                String name = javax.swing.JOptionPane.showInputDialog("New High Score! Enter your name:");
+		                if (name != null && !name.isEmpty()) {
+		                    scoreManager.addScore(name, score);
+		                }
+		            }
+		            
 		            break;
 		        }
 		    }
@@ -134,9 +201,14 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		if (e.getKeyCode() == 32) {
-	        croc.hop();
+			if (onTitleScreen) {
+	            resetGame();
+	            onTitleScreen = false;
+	        } else {
+	            croc.hop();
+	        }
 	    }
-	    if (e.getKeyCode() == 82) {
+	    if (e.getKeyCode() == 82 && gameOver) {
 	        resetGame();
 	    }
 	    if (e.getKeyCode() == 79) {
@@ -145,11 +217,16 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    if (e.getKeyCode() == 73) {
 	    	timer.start();
 	    }
+	    
+	    if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	        onTitleScreen = true;
+	        repaint();
+	    }
 	}
 	
 	private void resetGame() {
 	    // Reset bird position
-	    croc.setY(300); // Or whatever your original Y position was
+	    croc.setY(300);
 
 	    // Reset pipe positions and gaps
 	    for (int i = 0; i < pipes.size(); i++) {
@@ -165,6 +242,8 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    if (!timer.isRunning()) {
 	        timer.start();
 	    }
+	    
+	    score = 0;
 	}
 
 	
