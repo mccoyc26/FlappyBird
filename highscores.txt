@@ -1,5 +1,5 @@
+ Wyatt,29
+e,23
+yippee,21
+ y,17
  Zerg,15
- e,11
-z,10
-W,9
- W2,5

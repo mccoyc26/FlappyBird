@@ -6,8 +6,11 @@ import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.net.URL;
 
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+
 public class GameOverGiph {
-    private Image gif;
+    private ImageIcon gif;
     private AffineTransform tx;
 
     int width = 600;
@@ -15,8 +18,10 @@ public class GameOverGiph {
     int x, y;
 
     public GameOverGiph() {
-        gif = getImage("/imgs/" + "gameover.gif");
-
+//        gif = getImage("/imgs/" + "gameover.gif");
+        
+        gif = new ImageIcon(getClass().getResource("/imgs/gmover.gif"));
+        
         x = Display.WIDTH / 2 - width / 2;
         y = Display.HEIGHT / 2 - height / 2;
 
@@ -24,11 +29,11 @@ public class GameOverGiph {
         tx.scale(1.0, 1.0);
     }
 
-    public void paint(Graphics g) {
+    public void paint(Graphics g, JComponent parent) {
         Graphics2D g2 = (Graphics2D) g;
         tx.setToTranslation(x, y);
         tx.scale(1.0, 1.0);
-        g2.drawImage(gif, tx, null);
+        gif.paintIcon(parent, g, x, y);
 
         if (Display.debugging) {
             g.setColor(Color.GREEN);

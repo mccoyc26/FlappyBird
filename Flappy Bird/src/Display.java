@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.io.File;
@@ -67,12 +68,6 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	public Display() {
 		//create display settings
 		
-		File fontFile = new File("assets/funFont.ttf");
-		System.out.println("Exists? " + fontFile.exists());
-		System.out.println("Absolute path: " + fontFile.getAbsolutePath());
-
-
-		
 		loadFont();
 		timer = new Timer(16, this); // ~60 FPS
 		timer.start();
@@ -97,14 +92,14 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    if (onTitleScreen) {
 	        g.setColor(Color.WHITE);
 	        g.setFont(gameFont.deriveFont(32f));
-	        g.drawString("Flappy Bird", 500, 150);
+	        g.drawString("Flappy Bird", 500, 120);
 	        g.setFont(gameFont.deriveFont(24f));
-	        g.drawString("Press SPACE to start", 470, 200);
+	        g.drawString("Press SPACE to start", 470, 170);
 
-	        g.drawString("High Scores:", 500, 300);
-	        int y = 340;
+	        g.drawString("High Scores:", 525, 240);
+	        int y = 280;
 	        for (ScoreManager.ScoreEntry entry : scoreManager.getScores()) {
-	            g.drawString(entry.name + " - " + entry.score, 500, y);
+	            g.drawString(entry.name + " - " + entry.score, 540, y);
 	            y += 30;
 	        }
 
@@ -124,17 +119,18 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    g.drawString("Score: " + score, 20, 40);
 	    
 	    if (gameOver) {
-            gif.paint(g);
+	    	gif.paint(g, this);
             g.drawString("Press R to restart", 500, 400);
         }
-
+	    
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 	    
-		if (onTitleScreen || gameOver) return;
-		
+		if (onTitleScreen || gameOver) {
+			return;
+		}
 		if(!gameOver) {
 			croc.update();
 		    Rectangle birdRect = new Rectangle(320, croc.getY() + 5, 60, 40);
