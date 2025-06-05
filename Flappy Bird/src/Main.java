@@ -12,7 +12,8 @@ public class Main {
 			panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			panel.setResizable(false);
 			
-			StartScreen startScreen = new StartScreen(panel);
+			Display display = new Display();
+			StartScreen startScreen = new StartScreen(panel, display);
 			startScreen.setPreferredSize(new Dimension(1280, 720));
 			panel.add(startScreen);
 			panel.pack();

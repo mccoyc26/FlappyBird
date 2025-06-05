@@ -1,4 +1,6 @@
 import java.awt.Color;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -15,6 +17,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -41,6 +46,7 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	private Random rand;
 	private Timer timer;
 	private Font gameFont;
+	private Clip backgroundMusic;
 	Bird croc = new Bird(300,300);
 	
 	
@@ -62,12 +68,30 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    }
 	}
 
-
+	 private void loadBackgroundMusic() {
+	        try {
+	            URL url = getClass().getResource("/assets/SHX4 - BOMBARDINO CROCODILO FUNK.wav");
+	            if (url != null) {
+	                AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+	                backgroundMusic = AudioSystem.getClip();
+	                backgroundMusic.open(audioIn);
+	                backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+	                backgroundMusic.start();
+	            } else {
+	                System.err.println("Background music file not found.");
+	            }
+	        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+	            e.printStackTrace();
+	        }
+	    }
 
 	
 	public Display() {
 		//create display settings
-		
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+		this.addKeyListener(this);  // <== ensure this only runs once!
+
 		loadFont();
 		timer = new Timer(16, this); // ~60 FPS
 		timer.start();
@@ -80,7 +104,7 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 		this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		this.setBackground(Color.DARK_GRAY);
 		this.setLayout(null);
-		
+		loadBackgroundMusic();
 	}
 	
 	@Override
@@ -132,6 +156,7 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 			return;
 		}
 		if(!gameOver) {
+			foreground.update();
 			croc.update();
 		    Rectangle birdRect = new Rectangle(320, croc.getY() + 5, 60, 40);
 	
@@ -163,6 +188,10 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 		        if (p.collidesWith(birdRect)) {
 		            gameOver = true;
 		            System.out.println("GAME OVER");
+		            
+		            if (backgroundMusic != null && backgroundMusic.isRunning()) {
+	                    backgroundMusic.stop();
+	                }
 		            
 		            ArrayList<ScoreManager.ScoreEntry> highs = scoreManager.getScores();
 		            if (highs.size() < 5 || score > highs.get(highs.size() - 1).score) {
@@ -196,6 +225,9 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
+		
+//		System.out.println("Key pressed: " + e.getKeyCode());
+		
 		if (e.getKeyCode() == 32) {
 			if (onTitleScreen) {
 	            resetGame();
@@ -220,8 +252,10 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    }
 	}
 	
-	private void resetGame() {
-	    // Reset bird position
+	public void resetGame() {
+		timer.stop();  // Stop any existing timer before restarting
+	    timer.start(); // Start fresh
+		// Reset bird position
 	    croc.setY(300);
 
 	    // Reset pipe positions and gaps
@@ -233,11 +267,13 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 
 	    // Reset game state
 	    gameOver = false;
-
+	    
+	    if (backgroundMusic != null && !backgroundMusic.isRunning()) {
+            backgroundMusic.setFramePosition(0);
+            backgroundMusic.start();
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
+        }
 	    // Restart timer if it isn't running
-	    if (!timer.isRunning()) {
-	        timer.start();
-	    }
 	    
 	    score = 0;
 	}

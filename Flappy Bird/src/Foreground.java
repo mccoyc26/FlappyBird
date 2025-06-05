@@ -72,7 +72,10 @@ public class Foreground {
 		
 		init(x,y);
 		
-		g2.drawImage(forward, tx, null);
+//		g2.drawImage(forward, tx, null);
+		
+		g2.drawImage(forward, x, y, null);
+		g2.drawImage(forward, x + Display.WIDTH, y, null);
 			
 		//draw hitbox based on x, y, width, height
 //		if(Display.debugging) {
@@ -81,6 +84,13 @@ public class Foreground {
 //			g.drawRect(x+20, y+5, width, height);
 //		}
 		
+	}
+	
+	public void update() {
+	    x -= 5;
+	    if (x <= -Display.WIDTH) {
+	        x = 0; // loop background for seamless scroll
+	    }
 	}
 	
 	private void init(double a, double b) {

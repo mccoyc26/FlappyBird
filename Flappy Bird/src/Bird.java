@@ -109,7 +109,7 @@ public class Bird {
 
 	public void hop() {
 		
-		vy = -8;
+		vy = -7;
 		
 	}
 	

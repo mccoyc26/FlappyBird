@@ -7,12 +7,15 @@ import javax.imageio.ImageIO;
 public class StartScreen extends JPanel {
    private JFrame parentFrame;
    private Image backgroundImage;
-   public StartScreen(JFrame frame) {
+   private Display display;
+   
+   public StartScreen(JFrame frame, Display display) {
        this.parentFrame = frame;
+       this.display = display;
        setLayout(null);
        loadImage();
        JButton startButton = new JButton("Start");
-       startButton.setBounds(150, 400, 100, 50); // Adjust based on image layout
+       startButton.setBounds(150, 400, 100, 50);
        add(startButton);
        startButton.addActionListener(new ActionListener() {
            @Override
@@ -30,18 +33,13 @@ public class StartScreen extends JPanel {
        }
    }
    private void startGame() {
-       parentFrame.getContentPane().removeAll();
-       parentFrame.add(new GamePanel());
-       parentFrame.revalidate();
-       parentFrame.repaint();
-       Display d = new Display();
-       parentFrame.add(d);
-       parentFrame.pack();
-       d.setFocusable(true);
-       d.requestFocusInWindow();
-       d.addKeyListener(d);
-       parentFrame.setLocationRelativeTo(null);
-       parentFrame.setVisible(true);
+
+	     parentFrame.getContentPane().removeAll();
+	     parentFrame.add(display); // reuse the same display (avoids multiple being created and causing issues)
+	     parentFrame.revalidate();
+	     parentFrame.repaint();
+	     display.requestFocusInWindow();
+	     display.resetGame();
    }
    @Override
    protected void paintComponent(Graphics g) {
