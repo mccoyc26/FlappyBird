@@ -42,7 +42,6 @@ public class Background {
 	public Background(int x, int y) {
 		//call the default constructor
 		this(); //invokes default constructor
-		//do the specific task for THIS constructor
 		this.x = x;
 		this.y = y;
 	}
@@ -75,11 +74,11 @@ public class Background {
 		g2.drawImage(forward, tx, null);
 			
 		//draw hitbox based on x, y, width, height
-//		if(Display.debugging) {
-//			//draw hitbox only if debugging
-//			g.setColor(Color.green);
-//			g.drawRect(x+20, y+5, width, height);
-//		}
+		if(Display.debugging) {
+			//draw hitbox only if debugging
+			g.setColor(Color.green);
+			g.drawRect(x+20, y+5, width, height);
+		}
 		
 	}
 	

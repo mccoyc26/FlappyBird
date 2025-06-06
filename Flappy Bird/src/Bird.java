@@ -36,13 +36,12 @@ public class Bird {
 		
 		tx = AffineTransform.getTranslateInstance(0, 0);
 		
-		init(x, y); 				//initialize the location of the image
+		init(x, y);//initialize the location of the image
 	}
 	
 	public Bird(int x, int y) {
 		//call the default constructor
 		this(); //invokes default constructor
-		//do the specific task for THIS constructor
 		this.x = x;
 		this.y = y;
 	}
@@ -124,7 +123,7 @@ public class Bird {
 	    if(vy == 0) forward = getImage("/imgs/"+"b.png");
 	    if(vy > 0) forward = getImage("/imgs/"+"b_fall.png");
 	    
-	    // Simple floor collision
+	    // floor collision
 	    if (y > 620 - height) {
 	        y = 620 - height;
 	        vy = 0;

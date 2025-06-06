@@ -17,7 +17,7 @@ public class Pipe {
         this.x = startX;
         this.gapY = gapY;
 
-        // Create TopPipe and BottomPipe ONCE
+        // Create TopPipe and BottomPipe once
         top = new TopPipe();
         bottom = new BottomPipe();
         updatePipePositions();

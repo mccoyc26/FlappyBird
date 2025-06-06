@@ -18,7 +18,6 @@ public class GameOverGiph {
     int x, y;
 
     public GameOverGiph() {
-//        gif = getImage("/imgs/" + "gameover.gif");
         
         gif = new ImageIcon(getClass().getResource("/imgs/gmover.gif"));
         

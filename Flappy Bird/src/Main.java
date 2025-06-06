@@ -8,7 +8,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 			
-			JFrame panel = new JFrame("Flappy");
+			JFrame panel = new JFrame("Flappy"); //initialize the JFrame
 			panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			panel.setResizable(false);
 			

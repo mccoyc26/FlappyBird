@@ -8,7 +8,7 @@ public class SoundPlayer {
 
     public SoundPlayer(String filename) {
         try {
-            // Load the audio file from the resources folder or root directory
+            // Load the audio file from the resources folder
             URL url = getClass().getResource(filename);
             if (url == null) {
                 throw new RuntimeException("Audio file not found: " + filename);

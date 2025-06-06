@@ -51,9 +51,8 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	
 	
 
-	private void loadFont() {
+	private void loadFont() { //method to load the pixel font instead of a basic one
 	    try {
-	        // Note the leading slash to look in the root of the classpath
 	        InputStream is = getClass().getResourceAsStream("/assets/funFont.ttf");
 	        if (is == null) {
 	            throw new IOException("Font file not found");
@@ -64,7 +63,7 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	        is.close();
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        gameFont = new Font("Arial", Font.BOLD, 32); // fallback
+	        gameFont = new Font("Arial", Font.BOLD, 32); // fallback in case font cannot be loaded
 	    }
 	}
 
@@ -90,14 +89,14 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 		//create display settings
 		this.setFocusable(true);
 		this.requestFocusInWindow();
-		this.addKeyListener(this);  // <== ensure this only runs once!
+		this.addKeyListener(this);
 
 		loadFont();
-		timer = new Timer(16, this); // ~60 FPS
+		timer = new Timer(16, this); // runs at ~60 FPS
 		timer.start();
 		rand = new Random();
 		for (int i = 0; i < NUM_PIPES; i++) {
-		    int startX = 800 + i * 300; // space them out horizontally
+		    int startX = 800 + i * 300; // space the pipes out horizontally
 		    int gapY = 100 + rand.nextInt(300);
 		    pipes.add(new Pipe(startX, gapY));
 		}    
@@ -143,7 +142,7 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	    g.drawString("Score: " + score, 20, 40);
 	    
 	    if (gameOver) {
-	    	gif.paint(g, this);
+	    	gif.paint(g, this); //paint the game over GIF
             g.drawString("Press R to restart", 500, 400);
         }
 	    
@@ -178,14 +177,14 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 		            p.scored = false;  // reset scored flag on recycle
 		        }
 		        
-		     // Score increment when bird passes pipe's right edge and not yet scored
+		        // Score increment when bird passes pipe's right edge and not yet scored
 		        if (!p.scored && croc.getX() > p.x + p.width) { // PIPE_WIDTH is the pipe image width (e.g., 60 or 80)
 		            score++;
 		            p.scored = true;
 		        }
 	
 		        // Collision check
-		        if (p.collidesWith(birdRect)) {
+		        if (p.collidesWith(birdRect) || croc.getY() >= 580) { //bird dies if it hits the pipes or ground
 		            gameOver = true;
 		            System.out.println("GAME OVER");
 		            
@@ -206,7 +205,7 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 		    }
 	
 		}
-	    repaint();
+	    repaint(); //called outside all conditional statements so that the GIF and such can be drawn no matter what
 	}
 
 
@@ -225,8 +224,6 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
-//		System.out.println("Key pressed: " + e.getKeyCode());
 		
 		if (e.getKeyCode() == 32) {
 			if (onTitleScreen) {
@@ -254,7 +251,7 @@ public class Display extends JPanel implements ActionListener, KeyListener{
 	
 	public void resetGame() {
 		timer.stop();  // Stop any existing timer before restarting
-	    timer.start(); // Start fresh
+	    timer.start();
 		// Reset bird position
 	    croc.setY(300);
 
@@ -273,7 +270,6 @@ public class Display extends JPanel implements ActionListener, KeyListener{
             backgroundMusic.start();
             backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
         }
-	    // Restart timer if it isn't running
 	    
 	    score = 0;
 	}
